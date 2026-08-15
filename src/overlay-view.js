@@ -197,6 +197,12 @@ export function createPetOverlay(store, mappings, { createElement, useRef, useSt
       }
     }
 
+    function onPointerCancel(e) {
+      // pointercancel（触摸被系统打断/浏览器接管手势）后清引用，防后续 move 误跟随。
+      dragRef.current = null;
+      e.currentTarget.releasePointerCapture?.(e.pointerId);
+    }
+
     const anim = overlayAnimStyle(snap);
     const bubble = snap.transient === "click"
       ? CLICK_BUBBLES[Math.floor(Math.random() * CLICK_BUBBLES.length)]
@@ -226,6 +232,7 @@ export function createPetOverlay(store, mappings, { createElement, useRef, useSt
         onPointerDown,
         onPointerMove,
         onPointerUp,
+        onPointerCancel,
         onPointerEnter: () => setHovered(true),
         onPointerLeave: () => setHovered(false),
       },

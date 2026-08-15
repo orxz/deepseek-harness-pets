@@ -2,7 +2,7 @@
 
 > 让 DeepSeek Harness 的状态动起来——官方原生 dsh 桌宠插件。
 
-本项目是一个**符合 [DeepSeek Harness (dsh)](https://github.com/deepseek-ai/deepseek-harness) 官方原生安装要求的插件**：按官方 bundle/profile 机制安装后，像素鲸鱼（DeepSeek Whale）或机械章鱼（DeepSeek Octo）会出现在 DSH Web UI 的会话流里，随你的评测与回合状态实时换动作、弹气泡——像 Codex 桌宠一样，但零外部依赖。
+本项目是一个**符合 [DeepSeek Harness (dsh)](https://github.com/deepseek-ai/deepseek-harness) 官方原生安装要求的插件**：按官方 bundle/profile 机制安装后，一只鲸鱼（官方 DeepSeek Whale SVG，v0.2 艺术层）会常驻 DSH Web UI 的**右下角悬浮窗**（`shell.overlay` 插槽，不占用聊天流），随你的评测与回合状态实时换动作、弹气泡——像 Codex 桌宠一样，但零外部依赖。
 
 宠物可通过 cordis.yml 一行配置**切换或随机**；宠物资产采用 [Petdex](https://github.com/crafter-station/petdex) 标准格式（`pet.json` + 8×9 spritesheet），将来可直接复用到 Petdex 桌面悬浮端或提交到 petdex.dev 社区画廊。
 
@@ -17,27 +17,29 @@
 ## 核心特性
 
 - **官方原生安装**：标准 dsh bundle（`package.json` 的 `dsh.bundle.patch` + `cordis.patch.yml`），无 fork、无补丁宿主。
+- **右下角常驻悬浮窗**：宠物浮在 Web UI 右下角（`shell.overlay` root 域插槽，跨会话常驻，不占聊天流），基于官方 DeepSeek 鲸鱼 SVG，随回合状态实时换 CSS 动画。
+- **拟真互动四项**：**点击**（跃起 + 随机开心文案，~1.5s 回落）、**悬停**（放大微倾 + 气泡"嗯？"）、**随机闲置**（idle 时每 20–60s 一次 3s 小动作）、**拖拽**（自由摆放、clamp 视口内、localStorage 位置持久化，刷新不丢）。
 - **状态实时映射**：dsh durable session 事件（turn/step/tool）驱动宠物状态机，评测跑分过程一眼可读。
 - **彩蛋触发**：评测完成弹 Score 气泡、跃出水面；检测到 SOTA 特征（v0.1 为文本近似判定）触发限定动画。
-- **宠物切换 / 随机**：默认出场是 DeepSeek 标志性大鲸鱼 `deepseek-whale`；可在 `~/.dsh/settings.yaml`（用户设置层）或 profile patch（base 层）换成 `random`（按 turn id 种子确定性选择，重放一致）或三源发现的任意皮肤；设置面板选择行开发中（见 Roadmap）。
+- **宠物切换 / 随机**：默认出场是 DeepSeek 标志性大鲸鱼 `deepseek-whale`；可在 `~/.dsh/settings.yaml`（用户设置层）或 profile patch（base 层）换成 `random`（按 turn id 种子确定性选择，重放一致）或三源发现的任意皮肤；设置面板选择行开发中（见 Roadmap）。注：v0.2 悬浮窗艺术层统一渲染鲸鱼 SVG，其他皮肤的专属视觉待 spritesheet 就绪（见 Roadmap）。
 - **皮肤源优先级**：自定义源 > Petdex 社区源 > 内置源——同名皮肤高优先源覆盖，你的自定义皮肤永远赢。
 - **Petdex 资产兼容**：像素资产即标准 Petdex 宠物包，可 `npx petdex submit` 上架社区画廊。
 
 ## 宠物状态映射
 
-三层契约：**dsh 事件信号 → 插件语义状态 → Petdex 动画行 + 气泡**。机器可读版见 [mappings/harness-states.json](mappings/harness-states.json)。
+三层契约：**dsh 事件信号 → 插件语义状态 → 悬浮窗 CSS 动画 + 气泡**（Petdex 动画行作为 spritesheet 就绪后的资产契约保留）。机器可读版见 [mappings/harness-states.json](mappings/harness-states.json)。
 
-| dsh 事件信号 | 语义状态 | 动画行 | 鲸鱼视觉 / 气泡 |
+| dsh 事件信号 | 语义状态 | 动画行 | 悬浮窗视觉 / 气泡 |
 |---|---|---|---|
-| 会话空闲 | `idle` | idle | 浮水打瞌睡 / zzZ |
-| `turn/start` 后首轮准备 | `loading` | waiting | 喷水 / 加载数据中 |
-| `step/start`、工具高频活动 | `inferring` | running | 极速下潜敲键盘 / 推理中 |
-| 报告/评分类工具调用 | `scoring` | review | 举报告审视 / 评分中 |
-| `turn/end` 正常完成 | `done` | waving | 挥鱼鳍 / 完成！ |
-| 完成且带 SOTA 文本特征 | `sota` | jumping | 跃出水面 / SOTA！ |
-| `turn/end` 失败/中断 | `error` | failed | 翻白肚 / [ERROR] 请检查日志 |
+| 会话空闲 | `idle` | idle | 缓慢浮动打瞌睡 / zzZ |
+| `turn/start` 后首轮准备 | `loading` | waiting | 上浮蓄力 / 加载数据中 |
+| `step/start`、工具高频活动 | `inferring` | running | 左右摇摆游动 / 推理中 |
+| 报告/评分类工具调用 | `scoring` | review | 审视微旋 / 评分中 |
+| `turn/end` 正常完成 | `done` | waving | 摆动挥舞 / 完成！ |
+| 完成且带 SOTA 文本特征 | `sota` | jumping | 跃起回弹 / SOTA！ |
+| `turn/end` 失败/中断 | `error` | failed | 翻肚灰度 / [ERROR] 请检查日志 |
 
-动画行均为 Petdex 9 标准行（idle / running / running-left / running-right / waving / jumping / failed / waiting / review）的子集；失败信号（`status: failed`、`error`、`outcome: stopped`）任一命中即进入 `error`。
+悬浮窗视觉由 `src/pet-art.js` 的 `OVERLAY_ANIMATIONS` 动画表驱动（CSS transform keyframes，v0.2 艺术层为内联鲸鱼 SVG）；动画行仍为 Petdex 9 标准行（idle / running / running-left / running-right / waving / jumping / failed / waiting / review）的子集，供 spritesheet 切换点消费。失败信号（`status: failed`、`error`、`outcome: stopped`）任一命中即进入 `error`。
 
 ## 安装
 
@@ -59,7 +61,7 @@ dsh web
 ```
 
 安装后可用 `dsh --profile web --dump-config` 检查 `deepseek-harness-pets` 行是否在组合树中；
-浏览器打开后 `window.__DSH_BOOT__` 应含该条目，且 `/plugins/deepseek-harness-pets/client.js` 返回 200。
+浏览器打开后 `window.__DSH_BOOT__` 应含该条目，`/plugins/deepseek-harness-pets/client.js` 返回 200，且打开任意会话应看到右下角鲸鱼悬浮窗（idle 浮动 + zzZ 气泡）。
 
 **方式 B：`dsh plugin add`（等价于方式 A 的自动化路径）**
 
@@ -87,7 +89,7 @@ npm install -g deepseek-harness-pets   # 计划中，见 Roadmap
 
 合并后的池进入设置可选值与 random 随机池（设置面板选择行开发中，当前经 settings.yaml 消费）；某源目录缺失/不可读时该源降级为空，绝不阻断（fail-open）。
 
-> 注：v0.1 中 custom/petdex 皮肤的选中与优先级判定已生效，但其像素图渲染需要 Host 静态服务（Roadmap）；就绪前外部源皮肤显示为标注 slug 的占位块。内置皮肤在 spritesheet 提交前同样显示占位块（由 `src/pet-pool.js` 的 `BUNDLED_ARTWORK` 登记表控制，测试强制登记与实际文件一致，杜绝破图）。
+> 注：v0.1 中 custom/petdex 皮肤的选中与优先级判定已生效；v0.2 悬浮窗艺术层统一渲染内联鲸鱼 SVG，外部源与内置皮肤的 spritesheet 像素图待 Host 静态服务与渲染切换点接入（Roadmap）。spritesheet 契约仍由 `src/pet-pool.js` 的 `BUNDLED_ARTWORK` 登记表锁定（测试强制登记与实际文件一致，杜绝破图）。
 
 ## 配置（宠物切换 / 随机）
 
@@ -149,11 +151,11 @@ assets/pets/deepseek-whale/
 
 - [x] 真实 dsh 环境全链路验收（安装→组合→boot graph→client bundle→设置注册→三层解析，2026-08-15 实测）
 - [ ] 设置面板宠物选择行：浏览器半边注册 `settings.general.item` 偏好行（defineStore + locale + scope.set，参照 @dshthemes/ui 的 ThemePickerRow 形态）
-- [ ] 会话内目验：真实 turn 事件驱动宠物卡出现在聊天流（待 agent 会话）
+- [ ] 悬浮窗实机目验：右下角常驻 + 点击/悬停/随机闲置/拖拽持久化 + 各状态动画实机确认（待重启 DSH Web 后人工目验）
 - [ ] 像素图就绪（`spritesheet.webp` × 2，社区认领）
 - [ ] Host 静态服务：向 Web UI 提供 custom/petdex 源的 spritesheet（消除占位块）
 - [ ] Host 侧专用事件族：精确判定评测阶段与 SOTA（需 TS declaration merging，迁移到 TS 包）
-- [ ] 常驻浮层形态（非聊天流卡的其他 slots 注入点）
+- [x] 常驻浮层形态（`shell.overlay` root 域插槽注入，v0.2 已实施——见 evidence.md #29）
 - [ ] 发布到 npm 并登记 `dsh-plugin` topic（发布前需移除 package.json 的 `"private": true`）
 - [ ] 机械章鱼 octo 上色稿
 - [ ] `npx petdex submit` 上架画廊
@@ -167,9 +169,9 @@ assets/pets/deepseek-whale/
 ## 故障排查
 
 - **设置面板没有宠物项**：属预期——面板偏好行（`settings.general.item` 插槽）开发中（见 Roadmap）；当前用 `~/.dsh/settings.yaml` 或 profile patch 配置。
-- **装了没反应**：bundle 不热加载，重启 DSH Web；`dsh --profile web --dump-config` 确认 `deepseek-harness-pets` 行存在；浏览器控制台查 `window.__DSH_BOOT__` 是否含该条目、Network 看 `/plugins/deepseek-harness-pets/client.js` 是否 200（404 多半是没跑 `npm run build` 或 exports["./client"] 指错）。
+- **悬浮窗不出现**：先确认 dsh ≥ 0.1.0-rc.5（更早版本无 `shell.overlay` 插槽）；bundle 不热加载，重启 DSH Web；仍无则 `dsh --profile web --dump-config` 确认 `deepseek-harness-pets` 行存在，浏览器控制台查 `window.__DSH_BOOT__` 是否含该条目、Network 看 `/plugins/deepseek-harness-pets/client.js` 是否 200（404 多半是没跑 `npm run build` 或 exports["./client"] 指错），console 无 `[deepseek-harness-pets]` 报错即说明插槽声明被宿主静默忽略（fail-open 设计，宠物安静不出现）。
+- **悬浮窗位置丢失（回到右下角）**：属预期——拖拽位置存于浏览器 localStorage（key `dsh-pets-overlay-pos`），清缓存/换浏览器/隐私模式后回落默认右下角。
 - **设置面板缺项但能启动**：`~/.dsh/settings.yaml` 里该命名空间的值不合法时注册被拒、命名空间不装但启动不会报错（实测容纳性，见 evidence.md #25）；改正为池内值或删掉该 section 重启。
-- **外部源皮肤显示占位块**：选中与优先级已生效，像素图等待 Host 静态服务（见 Roadmap）；确认 `~/.dsh/pets/<slug>/` 内有 `pet.json` 与 `spritesheet.webp`。
-- **宠物图片不显示/显示占位块**：内置皮肤在 spritesheet 提交前渲染占位块（提交后需在 `src/pet-pool.js` 的 `BUNDLED_ARTWORK` 登记，测试会强制校验）。
+- **换了皮肤但悬浮窗视觉没变**：v0.2 艺术层统一渲染内联鲸鱼 SVG，皮肤选中与优先级已生效（slug 见悬浮窗 `data-dsh-pet-overlay` 属性），专属像素视觉待 spritesheet 切换点接入（见 Roadmap 的像素图与 Host 静态服务）。
 - **random 每次不一样**：random 按 turn id 种子选择，同一 turn 重放一致；跨 turn 允许换皮（这是特性）。
 - **dsh 升级后异常**：dsh 处于 developer preview，不排除 breaking changes；本插件验证于 dsh 0.1.0-rc.5（2026-08 本机实测：安装→组合→boot graph→设置注册→三层解析全链路），出新问题时请附 `--dump-config` 输出提 issue。
