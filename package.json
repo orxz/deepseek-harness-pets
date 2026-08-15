@@ -1,7 +1,6 @@
 {
   "name": "deepseek-harness-pets",
   "version": "0.2.0",
-  "private": true,
   "description": "DeepSeek Harness 桌宠插件：像素鲸鱼/机械章鱼随评测与回合状态在 DSH Web UI 中动起来；宠物资产兼容 Petdex 格式。",
   "type": "module",
   "main": "./src/host.js",
@@ -47,6 +46,17 @@
   },
   "devDependencies": {
     "esbuild": "^0.25.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orxz/deepseek-harness-pets.git"
+  },
+  "homepage": "https://github.com/orxz/deepseek-harness-pets#readme",
+  "bugs": {
+    "url": "https://github.com/orxz/deepseek-harness-pets/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "dsh-plugin",
