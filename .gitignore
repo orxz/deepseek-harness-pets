@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Test output
+*.tap
+coverage/
+.nyc_output/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# dsh local profile experiments (keep repo-copyable files only)
+.dsh-home/
+
+# Superpowers SDD scratch workspace
+.superpowers/

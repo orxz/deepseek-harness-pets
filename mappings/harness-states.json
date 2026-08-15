@@ -1,0 +1,71 @@
+{
+  "version": "0.1.0",
+  "description": "deepseek-harness-pets 状态映射契约：dsh durable session 事件信号 → 插件语义状态（pet-state.js）→ Petdex 标准动画行 + 播放帧率 fps + 气泡文案（renderer.js）。语义状态 key 是插件代码与本文件的唯一契约。",
+  "standardRows": [
+    "idle",
+    "running-right",
+    "running-left",
+    "waving",
+    "jumping",
+    "failed",
+    "waiting",
+    "running",
+    "review"
+  ],
+  "officialBaseline": {
+    "description": "官方 @petdex/dsh-plugin 的映射基准，本映射在其上叠加 eval 语义层；推断信号置信 medium 时宁可回落到基准行。",
+    "source": "petdex integrations/dsh/README.md State mapping"
+  },
+  "states": {
+    "idle": {
+      "row": "idle",
+      "fps": 4,
+      "signals": ["无进行中的 turn（会话空闲）"],
+      "visual": "浮水打瞌睡",
+      "bubble": { "zh": "zzZ", "en": "zzZ" }
+    },
+    "loading": {
+      "row": "waiting",
+      "fps": 6,
+      "signals": ["turn 开始后首轮数据集拉取/准备类工具调用（推断：拉取类工具特征）"],
+      "visual": "鲸鱼喷水",
+      "bubble": { "zh": "加载数据中…", "en": "Loading data..." }
+    },
+    "inferring": {
+      "row": "running",
+      "fps": 8,
+      "variants": ["running", "running-left", "running-right"],
+      "signals": ["step/tool 高频活动（官方基准=running）"],
+      "visual": "极速下潜、认真敲键盘",
+      "bubble": { "zh": "推理中…", "en": "Inferring..." }
+    },
+    "scoring": {
+      "row": "review",
+      "fps": 6,
+      "signals": ["汇总/报告类工具调用（推断：报告类工具特征）"],
+      "visual": "举报告审视",
+      "bubble": { "zh": "评分中…", "en": "Scoring..." }
+    },
+    "done": {
+      "row": "waving",
+      "fps": 6,
+      "signals": ["turn completed（官方基准=waving）"],
+      "visual": "挥鱼鳍",
+      "bubble": { "zh": "完成！", "en": "Done!" }
+    },
+    "sota": {
+      "row": "jumping",
+      "fps": 10,
+      "signals": ["评测分数创新高（v0.1 以完成事件特征近似，精确判定见 Roadmap）"],
+      "visual": "跃出水面、放烟花",
+      "bubble": { "zh": "SOTA！", "en": "SOTA!" }
+    },
+    "error": {
+      "row": "failed",
+      "fps": 4,
+      "signals": ["turn failed / stopped（官方基准=failed）"],
+      "visual": "翻白肚、机械故障",
+      "bubble": { "zh": "[ERROR] 请检查日志", "en": "[ERROR] Check logs" }
+    }
+  }
+}

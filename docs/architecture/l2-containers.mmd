@@ -1,0 +1,34 @@
+%% View: L2 Containers / modules inside the repo (= one dsh plugin package)
+%% Question: 插件内部单元、契约位置、依赖方向
+flowchart TB
+    PKG["c.package | 仓库根 package.json<br/>type:module · main · dsh.bundle.patch"]
+    PATCH["c.patch | cordis.patch.yml<br/>将插件行插入 web profile"]
+    IDX["c.index | src/index.js<br/>Client 入口 inject/apply<br/>注册 ConversationNodeDefinition + renderer<br/>帧驱动：buildViewNode 现算 frameIndex"]
+    STATE["c.pet-state | src/pet-state.js<br/>durable 事件 → 宠物语义状态机（纯函数）<br/>stateEnteredAt（时钟注入）"]
+    SRC["c.pet-sources | src/pet-sources.js<br/>三源扫描与合并：custom > petdex > bundled<br/>同 slug 高优先源覆盖（fail-open）"]
+    HOST["c.host | src/host.js<br/>Host 入口：扫描三源注册设置面板<br/>（pet 枚举 + pets 池 base 层）"]
+    REND["c.renderer | src/renderer.js<br/>spritesheet 帧播放器（零依赖）<br/>frameAtTime + frameStyle"]
+    POOL["c.pet-pool | src/pet-pool.js<br/>DEFAULT_PET_POOL / BUNDLED_ARTWORK<br/>composePetPool（唯一事实源）"]
+    TCTX["c.turn-contexts | src/turn-contexts.js<br/>有界 turn 上下文注册表<br/>终态淘汰 + 迟到 id 收养"]
+    MAP["c.mapping | mappings/harness-states.json<br/>语义状态 → 动画行 + fps + 气泡文案（机器可读契约）"]
+    WHALE["a.whale | assets/pets/deepseek-whale/<br/>pet.json + spritesheet（占位规范）"]
+    OCTO["a.octo | assets/pets/deepseek-octo/<br/>pet.json + spritesheet（占位规范）"]
+
+    PKG -->|"declares bundle"| PATCH
+    PATCH -->|"mounts"| IDX
+    IDX -->|"imports"| STATE
+    IDX -->|"imports"| REND
+    IDX -->|"imports"| TCTX
+    IDX -->|"imports"| POOL
+    IDX -->|"reads"| MAP
+    STATE -->|"语义状态 key 查表"| MAP
+    HOST -->|"scan/merge"| SRC
+    HOST -->|"imports"| POOL
+    SRC -->|"池兜底"| WHALE
+    SRC -->|"池兜底"| OCTO
+    POOL -->|"BUNDLED_ARTWORK 登记可用像素图"| WHALE
+    POOL -->|"BUNDLED_ARTWORK 登记可用像素图"| OCTO
+    REND -->|"loads spritesheet"| WHALE
+    REND -->|"loads spritesheet"| OCTO
+    MAP -->|"动画行 ID ⊆ 9 标准行"| WHALE
+    MAP -->|"动画行 ID ⊆ 9 标准行"| OCTO

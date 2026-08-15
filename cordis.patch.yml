@@ -1,0 +1,9 @@
+# dsh bundle patch：将本插件（双面：Host 设置注册 + 浏览器宠物卡）插入 web
+# profile 的插件树。格式已对照 dsh 源码与 @dshthemes/ui 实例验证
+# （顶层数组：- id 覆盖行 / - insert 插入行；行为 {id, name, config?}）。
+# 安装：`dsh plugin add deepseek-harness-pets`，或手动把本包加入 profile 的
+# dsh.profile.bundles。行级 config 可在 profile 的 cordis.patch.yml 里按
+# id 覆盖（例：config.pet）。
+- insert:
+    - id: deepseek-harness-pets
+      name: deepseek-harness-pets

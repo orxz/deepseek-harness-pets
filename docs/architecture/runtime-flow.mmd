@@ -1,0 +1,20 @@
+%% View: Runtime data flow (proposed, evidence-backed)
+%% Question: dsh 事件如何变成宠物动画与气泡
+%% Solid = confirmed mechanism per official docs; inferred detail labeled
+flowchart LR
+    E1["dsh session log<br/>durable events: turn/start, turn/end,<br/>step/start, step/end, user/message,<br/>assistant/message, tool/call, tool/result"]
+    E2["ConversationNodeDefinition.match(event)<br/>src/index.js（官方 cookbook 机制）"]
+    E3["pet-state.js 状态机<br/>match/start/update → 语义状态<br/>idle/loading/inferring/scoring/done/sota/error"]
+    E4["mappings/harness-states.json<br/>语义状态 → 动画行 + 气泡文案"]
+    E5["renderer.js<br/>frameAtTime：stateEnteredAt + mappings fps 现算帧<br/>按 8×9 spritesheet 帧播放"]
+    E6["DSH Web UI Chat 流<br/>宠物状态卡 + 气泡"]
+    C1["cordis.yml config<br/>pet: whale | octo | random<br/>random 按 turn id seed 选定（确定性重放）"]
+
+    E1 -->|"append（live）或 replay（ascending seq）"| E2
+    E2 -->|"start/update"| E3
+    E3 -->|"语义状态 key"| E4
+    E4 -->|"动画行 + 文案"| E5
+    E5 -->|"publication: animation-frame（官方支持）"| E6
+    C1 -.->|"决定宠物皮肤"| E5
+    C1 -.->|"决定宠物皮肤"| E3
+    E3 -.->|"eval 语义细分（loading vs scoring）为工具特征推断（medium）"| E4

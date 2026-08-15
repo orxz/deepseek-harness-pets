@@ -1,0 +1,19 @@
+%% View: L1 System Context
+%% Question: 本插件（proposed）在 dsh 与 Petdex 生态中的角色与边界
+%% State labels: external systems are current; sys.* nodes are proposed
+flowchart TB
+    USER["actor.eval-runner | 评测执行者 / 皮肤作者"]
+    DSH["ext.dsh | DeepSeek Harness<br/>Node.js 插件宿主 · Cordis · developer preview<br/>npm @deepseek-ai/dsh"]
+    WEBUI["ext.dsh-web-app | DSH Web UI<br/>浏览器应用 · 127.0.0.1:3080<br/>ConversationNode 渲染管线"]
+    PDX["ext.petdex-desktop | Petdex 桌面端（可选）<br/>悬浮宠渲染 · hook server 127.0.0.1:7777"]
+    GAL["ext.petdex-gallery | petdex.dev 画廊<br/>npx petdex install / submit"]
+    SYS["sys.dsh-pets | 本仓库 proposed<br/>官方原生 dsh 桌宠插件<br/>（Web UI 渲染 + Petdex 格式资产）"]
+
+    USER -->|"runs npx @deepseek-ai/dsh web"| DSH
+    DSH -->|"composes dsh-web-app bundle（current·high）"| WEBUI
+    SYS -->|"installed as dsh bundle into profile web（proposed·high 依据官方机制）"| DSH
+    SYS -->|"renders ConversationNode inside（proposed·high 依据官方 cookbook）"| WEBUI
+    SYS -.->|"资产同格式可互通（format-compatible，非运行时依赖）"| PDX
+    SYS -.->|"spritesheet 可 npx petdex submit（optional 分发渠道）"| GAL
+    GAL -->|"install"| PDX
+    USER -->|"watches pet in DSH Web UI"| WEBUI
