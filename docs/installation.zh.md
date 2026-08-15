@@ -94,6 +94,6 @@ dsh web   # bundle 不热加载——每次重建后都要重启
 
 - **右下角没有鲸鱼**——需 dsh ≥ 0.1.0-rc.5（`shell.overlay` 插槽）；重启 `dsh web`（bundle 不热加载）；`dsh --profile web --dump-config` 查条目、浏览器 console 查报错。插件 fail-open：任何异常时宠物安静不出现，绝不破坏 UI。
 - **刷新后位置重置**——`localStorage` 被清，宠物回默认右下角。预期行为。
-- **换了皮肤但鲸鱼没变样**——spritesheet 就绪前预期如此（Roadmap）；选择实际已生效（`data-pet-overlay` 属性可见 slug）。
+- **换了皮肤但鲸鱼没变样**——spritesheet 就绪前预期如此（Roadmap）；选择实际已生效（`data-dsh-pet-overlay` 属性可见 slug）。
 - **设置不生效 / 面板没有宠物行**——池外值会让注册被拒（安全但安静）；改正值或删掉该节后重启。设置面板选择行在 Roadmap。
 - **dsh 升级后异常**——dsh 是 developer preview。请附 `--dump-config` 输出提 issue。

@@ -94,6 +94,6 @@ with the package installed (`pnpm add deepseek-harness-pets` inside the profile 
 
 - **No whale in the corner** — dsh ≥ 0.1.0-rc.5 required (`shell.overlay` slot); restart `dsh web` (bundles are not hot-reloaded); check `dsh --profile web --dump-config` for the entry and the browser console for errors. The plugin is fail-open: if anything is off, the pet silently does not appear rather than breaking the UI.
 - **Position reset after reload** — `localStorage` was cleared; the pet returns to the default bottom-right corner. Expected.
-- **Switched skins but the whale looks the same** — expected until spritesheets land (Roadmap); selection still takes effect (`data-pet-overlay` attribute shows the slug).
+- **Switched skins but the whale looks the same** — expected until spritesheets land (Roadmap); selection still takes effect (`data-dsh-pet-overlay` attribute shows the slug).
 - **Settings ignored / panel missing the pet row** — values outside the pool make registration fail silently-but-safely; fix the value or delete the section and restart. The settings-panel picker row is on the Roadmap.
 - **After a dsh upgrade things break** — dsh is a developer preview. File an issue with your `--dump-config` output.
