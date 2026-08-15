@@ -151,7 +151,7 @@ assets/pets/deepseek-whale/
 
 - [x] 真实 dsh 环境全链路验收（安装→组合→boot graph→client bundle→设置注册→三层解析，2026-08-15 实测）
 - [ ] 设置面板宠物选择行：浏览器半边注册 `settings.general.item` 偏好行（defineStore + locale + scope.set，参照 @dshthemes/ui 的 ThemePickerRow 形态）
-- [ ] 悬浮窗实机目验：右下角常驻 + 点击/悬停/随机闲置/拖拽持久化 + 各状态动画实机确认（待重启 DSH Web 后人工目验）
+- [x] 悬浮窗实机目验（2026-08-15 完成：常驻右下角/悬停/点击瞬态/拖拽持久化刷新恢复/turn 状态流转/loading→动画/console 零报错/聊天流零卡片，Chrome DevTools 实测）
 - [ ] 像素图就绪（`spritesheet.webp` × 2，社区认领）
 - [ ] Host 静态服务：向 Web UI 提供 custom/petdex 源的 spritesheet（消除占位块）
 - [ ] Host 侧专用事件族：精确判定评测阶段与 SOTA（需 TS declaration merging，迁移到 TS 包）
