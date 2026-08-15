@@ -1,18 +1,20 @@
-# Release 验证：推 v* tag 时跑完整验证 + 发布物清单快照。
-# 不发布：npm publish 在维护者本地执行（见 CONTRIBUTING 发布流程）；
-# 本 workflow 的价值是对打 tag 时刻的产物做独立环境复核。
+# Release：推 v* tag 时验证并发布到 npm（trusted publishing，零 token）。
+# 认证：npm Trusted Publisher（orxz/deepseek-harness-pets/release.yml）经
+# GitHub OIDC 换取发布凭据——无需任何 NPM_TOKEN secret；2FA 由 npm 侧信任
+# 配置豁免。发布步骤只在验证全绿后执行。
 name: Release
 
 on:
   push:
     tags: ["v*"]
 
-# 最小权限：本 workflow 只读仓库内容，不授予任何写权限
+# OIDC 换 token 需要 id-token: write；仓库内容只读。
 permissions:
   contents: read
+  id-token: write
 
 jobs:
-  verify:
+  verify-and-publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,9 +22,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # 漂移门禁：重建后工作树必须干净（lib/client.js 与提交版一致）
       - run: git diff --exit-code -- lib/client.js
       # 发布物清单进日志：供人工核对（版本号/文件数/体积）
       - run: npm pack --dry-run
+      # trusted publishing：OIDC 签名身份自动换取 registry 凭据
+      - run: npm publish --provenance

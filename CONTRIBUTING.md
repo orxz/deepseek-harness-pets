@@ -59,20 +59,21 @@ npx petdex submit ./assets/pets/<slug>/
 
 ## 发布流程（维护者）
 
-1. 改 `package.json` 的 `version`（semver；breaking 记得升 minor 之上的档位）。
-2. 本地验证并发布（需 `npm login`）：
+发布由 GitHub Actions 自动完成（npm trusted publishing：orxz/deepseek-harness-pets/release.yml，零 token、2FA 豁免）。维护者只需：
+
+1. 改 `package.json` 的 `version`（semver；breaking 记得升 minor 之上的档位），提交并推 main。
+2. 本地预验（与 CI 同套）：
    ```bash
    npm run build && npm test
-   npm pack --dry-run   # 核对清单（19 文件量级）
-   npm publish          # 公开发布
+   git diff --exit-code -- lib/client.js   # 漂移门禁，红了就提交重建产物
    ```
-3. 打 tag 推送（触发 Release workflow 独立复核）：
+3. 打 tag 并精确推送（触发 Release workflow 验证+发布）：
    ```bash
-   git tag vX.Y.Z && git push origin main --tags
+   git tag vX.Y.Z && git push origin main vX.Y.Z
    ```
-4. CI 漂移门禁红 = 忘了 `npm run build`：本地重建后提交再走一遍。
+4. Actions 页确认 Release 绿；`npm view deepseek-harness-pets version` 应返回新版本。
 
-CI 不持 npm token，发布永远在本地；Release workflow 只验证不发布。
+CI 漂移门禁红 = 忘了 `npm run build`：本地重建后提交再走一遍。不要用 `--tags` 批量推（防杂散 tag 误触发发布）。
 
 ## 行为准则
 
