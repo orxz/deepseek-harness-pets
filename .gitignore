@@ -20,3 +20,6 @@ Thumbs.db
 
 # Superpowers SDD scratch workspace
 .superpowers/
+
+# Qoder CLI local data
+.qoder/

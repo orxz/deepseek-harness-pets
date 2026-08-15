@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "description": "deepseek-harness-pets 状态映射契约：dsh durable session 事件信号 → 插件语义状态（pet-state.js）→ Petdex 标准动画行 + 播放帧率 fps + 气泡文案（renderer.js）。语义状态 key 是插件代码与本文件的唯一契约。",
+  "description": "deepseek-harness-pets 状态映射契约：dsh durable session 事件信号 → 插件语义状态（pet-state.js）→ Petdex 标准动画行 + 播放帧率 fps + 气泡文案（v0.2 悬浮窗由 pet-art.js 消费；动画行供 renderer.js 的 spritesheet 切换点预留）。语义状态 key 是插件代码与本文件的唯一契约。",
   "standardRows": [
     "idle",
     "running-right",

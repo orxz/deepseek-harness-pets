@@ -1,20 +1,22 @@
 %% View: Runtime data flow (proposed, evidence-backed)
 %% Question: dsh 事件如何变成宠物动画与气泡
-%% Solid = confirmed mechanism per official docs; inferred detail labeled
+%% v0.2：悬浮窗形态；Solid = confirmed mechanism; inferred detail labeled
 flowchart LR
     E1["dsh session log<br/>durable events: turn/start, turn/end,<br/>step/start, step/end, user/message,<br/>assistant/message, tool/call, tool/result"]
-    E2["ConversationNodeDefinition.match(event)<br/>src/index.js（官方 cookbook 机制）"]
-    E3["pet-state.js 状态机<br/>match/start/update → 语义状态<br/>idle/loading/inferring/scoring/done/sota/error"]
-    E4["mappings/harness-states.json<br/>语义状态 → 动画行 + 气泡文案"]
-    E5["renderer.js<br/>frameAtTime：stateEnteredAt + mappings fps 现算帧<br/>按 8×9 spritesheet 帧播放"]
-    E6["DSH Web UI Chat 流<br/>宠物状态卡 + 气泡"]
-    C1["cordis.yml config<br/>pet: whale | octo | random<br/>random 按 turn id seed 选定（确定性重放）"]
+    E2["ConversationNodeDefinition.match(event)<br/>src/index.js（官方 cookbook 机制）<br/>仅当前 turn 的事件驱动（迟到 update 忽略）"]
+    E3["pet-state.js 状态机<br/>start/update → 语义状态<br/>idle/loading/inferring/scoring/done/sota/error"]
+    E4["pet-store.js<br/>悬浮窗唯一视图状态源<br/>终态 4000ms 回 idle · 瞬态 click/fidget 覆盖"]
+    E5["mappings/harness-states.json<br/>语义状态 → 气泡文案"]
+    E6["pet-art.js + overlay-view.js<br/>OVERLAY_ANIMATIONS → CSS transform 动画<br/>点击/悬停/随机闲置/拖拽（localStorage 持久化）"]
+    E7["DSH Web UI 右下角悬浮窗<br/>shell.overlay（root 域常驻）<br/>鲸鱼 SVG + 气泡"]
+    C1["cordis.yml config / settings.yaml<br/>pet: whale | octo | random<br/>random 按 turn id seed 选定（确定性重放）"]
 
     E1 -->|"append（live）或 replay（ascending seq）"| E2
-    E2 -->|"start/update"| E3
-    E3 -->|"语义状态 key"| E4
-    E4 -->|"动画行 + 文案"| E5
-    E5 -->|"publication: animation-frame（官方支持）"| E6
-    C1 -.->|"决定宠物皮肤"| E5
-    C1 -.->|"决定宠物皮肤"| E3
-    E3 -.->|"eval 语义细分（loading vs scoring）为工具特征推断（medium）"| E4
+    E2 -->|"start: beginTurn + 锁皮；update: onEvent"| E4
+    E4 -->|"消费"| E3
+    E3 -->|"语义状态 key"| E5
+    E5 -->|"气泡文案"| E6
+    E4 -->|"快照（petSlug/state/transient/busy）"| E6
+    E6 -->|"shell.overlay 插槽渲染"| E7
+    C1 -.->|"决定宠物皮肤"| E2
+    E3 -.->|"eval 语义细分（loading vs scoring）为工具特征推断（medium）"| E5
