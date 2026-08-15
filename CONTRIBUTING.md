@@ -57,6 +57,23 @@ npx petdex submit ./assets/pets/<slug>/
 - 功能分支命名：`feature/<topic>`、皮肤：`pet/<slug>`、修复：`fix/<topic>`。
 - 不在 main 直接提交；提交信息用祈使句短句（如 `add deepseek-octo pet assets`）。
 
+## 发布流程（维护者）
+
+1. 改 `package.json` 的 `version`（semver；breaking 记得升 minor 之上的档位）。
+2. 本地验证并发布（需 `npm login`）：
+   ```bash
+   npm run build && npm test
+   npm pack --dry-run   # 核对清单（19 文件量级）
+   npm publish          # 公开发布
+   ```
+3. 打 tag 推送（触发 Release workflow 独立复核）：
+   ```bash
+   git tag vX.Y.Z && git push origin main --tags
+   ```
+4. CI 漂移门禁红 = 忘了 `npm run build`：本地重建后提交再走一遍。
+
+CI 不持 npm token，发布永远在本地；Release workflow 只验证不发布。
+
 ## 行为准则
 
 友善、对事不对人；商标注意：仓库与文档中不得暗示 DeepSeek 官方背书。
