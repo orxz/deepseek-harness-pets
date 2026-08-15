@@ -1,0 +1,24 @@
+# CI：push main / PR 验证——测试、构建、预构建产物漂移门禁。
+# 漂移门禁：lib/client.js 是随仓库分发的预构建产物，源码改动必须
+# 伴随 npm run build 后的产物提交，否则用户 npm 装到旧客户端。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      # 门禁：重建后工作树必须干净（lib/client.js 与提交版一致）
+      - run: git diff --exit-code -- lib/client.js
