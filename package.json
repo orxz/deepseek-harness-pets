@@ -1,6 +1,6 @@
 {
   "name": "deepseek-harness-pets",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "DeepSeek Harness 桌宠插件：像素鲸鱼/机械章鱼随评测与回合状态在 DSH Web UI 中动起来；宠物资产兼容 Petdex 格式。",
   "type": "module",
   "main": "./src/host.js",
