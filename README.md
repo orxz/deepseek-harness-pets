@@ -156,7 +156,7 @@ assets/pets/deepseek-whale/
 - [ ] Host 静态服务：向 Web UI 提供 custom/petdex 源的 spritesheet（消除占位块）
 - [ ] Host 侧专用事件族：精确判定评测阶段与 SOTA（需 TS declaration merging，迁移到 TS 包）
 - [x] 常驻浮层形态（`shell.overlay` root 域插槽注入，v0.2 已实施——见 evidence.md #29）
-- [ ] 发布到 npm 并登记 `dsh-plugin` topic（发布前需移除 package.json 的 `"private": true`）
+- [x] 发布到 npm 并登记 `dsh-plugin` topic（v0.2.0 起在 npm；发布经 GitHub Actions trusted publishing 自动完成——推 `v*` tag 即验证+发布，零 token，见 CONTRIBUTING 发布流程）
 - [ ] 机械章鱼 octo 上色稿
 - [ ] `npx petdex submit` 上架画廊
 
