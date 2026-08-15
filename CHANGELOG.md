@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Live screenshots of the floating overlay captured from a real `dsh web` session (idle / hover / click / dragged / close-up) under `docs/screenshots/`, embedded in both READMEs and the install guides.
+
 ## [0.2.3] — 2026-08-15
 
 Documentation and DX release — no runtime changes.

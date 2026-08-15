@@ -13,6 +13,8 @@ dsh web
 
 `web` is the shipped Web profile, initialized on first use. Open `http://localhost:3080` — the whale is already floating in the bottom-right corner, bobbing in idle. Send a message and watch it change animation with the turn state.
 
+What it looks like (idle / hover / click / dragged): [README — See it in action](../README.md#see-it-in-action), or the raw captures in [docs/screenshots/](screenshots/).
+
 Remove it just as easily:
 
 ```sh

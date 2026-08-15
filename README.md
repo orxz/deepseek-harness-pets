@@ -8,6 +8,16 @@ A persistent little whale floats in the **bottom-right corner** of the DSH Web U
 
 Pet skins follow the [Petdex](https://github.com/crafter-station/petdex) standard (`pet.json` + 8×9 spritesheet), so assets interop with the Petdex desktop overlay and the petdex.dev community gallery.
 
+## See it in action
+
+Live captures from a real `dsh web` session (dsh 0.1.0-rc.5, zero console errors):
+
+| Idle — bobbing doze, zzZ | Hover — "huh?" | Click — happy hop + cheer | Dragged — position persists |
+|:---:|:---:|:---:|:---:|
+| ![Idle overlay in the bottom-right corner](docs/screenshots/01-idle-overlay.png) | ![Hover reaction bubble](docs/screenshots/02-hover.png) | ![Click reaction bubble](docs/screenshots/03-click.png) | ![Pet dragged to a custom position](docs/screenshots/04-dragged.png) |
+
+Drag it anywhere inside the viewport — the position is clamped and survives reloads (`localStorage`). Full set: [docs/screenshots/](docs/screenshots/).
+
 ## Install
 
 Two commands (v0.2.2+ on npm):

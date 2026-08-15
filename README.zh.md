@@ -21,7 +21,15 @@ dsh web
 
 宠物可通过 cordis.yml 一行配置**切换或随机**；宠物资产采用 [Petdex](https://github.com/crafter-station/petdex) 标准格式（`pet.json` + 8×9 spritesheet），将来可直接复用到 Petdex 桌面悬浮端或提交到 petdex.dev 社区画廊。
 
-> 效果演示：（待像素图就绪后补 GIF——见 [皮肤创作指南](#-皮肤创作指南)）
+## 效果演示
+
+真实 `dsh web` 会话截图（dsh 0.1.0-rc.5，零 console 报错）：
+
+| 闲置——浮动打瞌睡 zzZ | 悬停——“嗯？” | 点击——跃起 + 随机开心文案 | 拖拽——位置持久化，刷新不丢 |
+|:---:|:---:|:---:|:---:|
+| ![右下角闲置悬浮窗](docs/screenshots/01-idle-overlay.png) | ![悬停反应气泡](docs/screenshots/02-hover.png) | ![点击反应气泡](docs/screenshots/03-click.png) | ![拖拽到自定义位置](docs/screenshots/04-dragged.png) |
+
+可拖到视口内任意位置（clamp 不越界，`localStorage` 持久化）。全部截图见 [docs/screenshots/](docs/screenshots/)；像素 spritesheet 就绪后补 GIF（见 [皮肤创作指南](#-皮肤创作指南)）。
 
 ---
 

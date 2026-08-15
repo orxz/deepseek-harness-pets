@@ -13,6 +13,8 @@ dsh web
 
 `web` 是自带的 Web profile，首次使用自动初始化。打开 `http://localhost:3080`——鲸鱼已经在右下角浮动打瞌睡了。发一条消息，看它随回合状态换动画。
 
+效果参考（闲置 / 悬停 / 点击 / 拖拽）：[README — 效果演示](../README.zh.md#效果演示)，原始截图在 [docs/screenshots/](screenshots/)。
+
 卸载同样一条：
 
 ```sh
