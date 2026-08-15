@@ -8,6 +8,11 @@ on:
   push:
     tags: ["v*"]
 
+# 发布串行排队：同 tag 重推绝不并发发布（cancel 会杀掉进行中的 publish）
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 # OIDC 换 token 需要 id-token: write；仓库内容只读。
 permissions:
   contents: read
@@ -20,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
