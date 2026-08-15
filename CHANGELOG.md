@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 
+## [0.2.3] — 2026-08-15
+
+Documentation and DX release — no runtime changes.
+
+- Bilingual docs: English README (two-command quick start via `dsh plugin add`) with the original Chinese content preserved as README.zh.md; full install guides split into docs/installation.md and installation.zh.md (prerequisites, state table, configuration, source checkout, hand-written patch row, troubleshooting).
+- CHANGELOG.md added (this file).
+- CI polish: concurrency groups (stale PR runs cancel; releases serialize with `cancel-in-progress: false`), Node version pinned via `.nvmrc`.
+- Fixed a DOM attribute name in the troubleshooting notes (`data-dsh-pet-overlay`).
+
 ## [0.2.2] — 2026-08-15
 
 First version published by the automated release pipeline (push a `v*` tag → GitHub Actions verifies and publishes to npm via [trusted publishing](https://docs.npmjs.com/generating-provenance-statements/), zero tokens, with provenance).
@@ -45,5 +54,6 @@ Initial scaffold: chat-card form. Kept for the record; superseded by 0.2.0.
 - State mapping contract (`mappings/harness-states.json`): semantic states → Petdex animation rows + fps + bubble copy, machine-readable and test-locked.
 - 92 unit tests (node:test, zero runtime dependencies); full-pipeline verification against a real dsh 0.1.0-rc.5 checkout.
 
+[0.2.3]: https://github.com/orxz/deepseek-harness-pets/releases/tag/v0.2.3
 [0.2.2]: https://github.com/orxz/deepseek-harness-pets/releases/tag/v0.2.2
 [0.2.0]: https://github.com/orxz/deepseek-harness-pets/releases/tag/v0.2.0
