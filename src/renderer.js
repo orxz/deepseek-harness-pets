@@ -1,5 +1,5 @@
 /**
- * renderer.js — spritesheet 帧播放的纯计算与视图构建（零依赖，React 由宿主经参数 h 注入）。
+ * renderer.js — spritesheet 帧播放的纯计算（零依赖）。
  *
  * 帧规格即 Petdex 标准：8 列 × 9 行、每帧 192×208；行序 idle..review 与 pet.json `states.row` 对应。
  */
@@ -59,83 +59,6 @@ export function bubbleText(stateDef, locale = "zh") {
   return stateDef?.bubble?.[locale] ?? stateDef?.bubble?.zh ?? "";
 }
 
-/**
- * 构建宠物卡片虚拟节点（供 DSH Web UI Chat 流渲染）。
- *
- * @param {Function} h - 宿主注入的 createElement（React）。
- * @param {object} input
- * @param {string} input.petSlug - 皮肤 slug。
- * @param {string} input.semanticState - 语义状态 key。
- * @param {object} input.stateDef - mappings.states[semanticState]。
- * @param {number} input.frameIndex - 当前帧序号。
- * @param {boolean} [input.busy] - 是否进行中（终态 false）。
- * @param {string|null} [input.spritesheetUrl] - 精灵图 URL；bundled 皮肤有相对路径，
- *   custom/petdex 外部源在 Host 静态服务就绪前传 null → 渲染占位块（见 Roadmap）。
- * @returns {object} 虚拟节点。
- */
-export function petCardView(
-  h,
-  { petSlug, semanticState, stateDef, frameIndex, busy = false, spritesheetUrl = null },
-) {
-  // URL 统一 percent-encode 后再放入带引号的 url("...")：slug/路径含空格、引号等
-  // 特殊字符时既不破图，也堵住经 spritesheetUrl 注入 CSS 的 theoretical 途径。
-  const safeUrl = encodeURI(String(spritesheetUrl));
-  const sprite = spritesheetUrl
-    ? h("div", {
-        "data-pet-art": "sprite",
-        title: petSlug,
-        className: "dsh-pet-sprite",
-        style: {
-          ...spriteAnimStyle(stateDef, frameIndex),
-          backgroundImage: `url("${safeUrl}")`,
-        },
-      })
-    : h(
-        "div",
-        {
-          "data-pet-art": "placeholder",
-          title: `${petSlug}（像素图暂不可用：内置皮肤待社区提交 spritesheet，外部源皮肤待 Host 静态服务）`,
-          style: {
-            width: `${STANDARD_FRAME.width}px`,
-            height: `${STANDARD_FRAME.height}px`,
-            border: "2px dashed #4D6BFE",
-            borderRadius: "8px",
-            color: "#4D6BFE",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "14px",
-            textAlign: "center",
-          },
-        },
-        petSlug,
-      );
-  return h(
-    "div",
-    {
-      "data-dsh-pet": petSlug,
-      "data-pet-state": semanticState,
-      style: {
-        display: "inline-flex",
-        alignItems: "flex-end",
-        gap: "8px",
-        padding: "4px 8px",
-      },
-    },
-    sprite,
-    h(
-      "span",
-      { style: { fontSize: "13px", opacity: busy ? 1 : 0.75 } },
-      bubbleText(stateDef),
-    ),
-  );
-}
-
-function rowOf(stateDef) {
-  return ROW_INDEX_BY_NAME[stateDef?.row] ?? 0;
-}
-// 注：rowOf 供外部调试/诊断用途保留；spriteAnimStyle 内部直接查表。
-
 /** 标准动画行名 → pet.json 行号（行序：idle, running-right, running-left, waving, jumping, failed, waiting, running, review）。 */
 export const ROW_INDEX_BY_NAME = Object.freeze({
   idle: 0,
@@ -179,18 +102,4 @@ export function buildAnimationCss(frame = STANDARD_FRAME) {
     "  background-repeat: no-repeat;",
     "}",
   ].join("\n");
-}
-
-/** 某语义状态的 sprite 内联样式：行偏移 + 该状态 fps 驱动的 CSS 动画。 */
-function spriteAnimStyle(stateDef, frameIndex) {
-  const row = ROW_INDEX_BY_NAME[stateDef?.row] ?? 0;
-  const style = frameStyle({ row, frameIndex });
-  return {
-    ...style,
-    animationName: `dsh-pet-row-${row}`,
-    // duration = 列数 / fps：fps 高的行（如 jumping 10fps）转得更快。
-    animationDuration: `${STANDARD_FRAME.columns / (stateDef?.fps || 6)}s`,
-    animationTimingFunction: `steps(${STANDARD_FRAME.columns})`,
-    animationIterationCount: "infinite",
-  };
 }
