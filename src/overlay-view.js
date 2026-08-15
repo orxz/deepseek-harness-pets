@@ -109,6 +109,23 @@ const CLICK_DURATION_MS = 1500;
 export function createPetOverlay(store, mappings, { createElement, useRef, useState, useEffect }) {
   const h = createElement;
 
+  /** pointer capture 尽力而为：非活动指针（合成事件/隐式已释放）会抛 NotFoundError，吞掉即可。 */
+  function capturePointer(el, pointerId) {
+    try {
+      el.setPointerCapture?.(pointerId);
+    } catch {
+      // fail-open：捕获失败只意味着拖拽出界时收不到 move，不影响其余交互。
+    }
+  }
+
+  function releasePointer(el, pointerId) {
+    try {
+      el.releasePointerCapture?.(pointerId);
+    } catch {
+      // 同上：capture 已被隐式释放（pointercancel 后）时 release 抛 NotFoundError。
+    }
+  }
+
   /** 读取持久化位置（任何异常回落 null = 默认右下角 CSS 定位）。 */
   function loadSaved() {
     try {
@@ -163,7 +180,7 @@ export function createPetOverlay(store, mappings, { createElement, useRef, useSt
 
     function onPointerDown(e) {
       dragRef.current = { startX: e.clientX, startY: e.clientY, moved: false };
-      e.currentTarget.setPointerCapture?.(e.pointerId);
+      capturePointer(e.currentTarget, e.pointerId);
     }
 
     function onPointerMove(e) {
@@ -185,7 +202,7 @@ export function createPetOverlay(store, mappings, { createElement, useRef, useSt
     function onPointerUp(e) {
       const drag = dragRef.current;
       dragRef.current = null;
-      e.currentTarget.releasePointerCapture?.(e.pointerId);
+      releasePointer(e.currentTarget, e.pointerId);
       if (drag != null && !drag.moved) {
         // 位移未超阈值 = 点击：瞬态跳跃（随机开心文案在 bubble 渲染分支处理）。
         store.setTransient("click", CLICK_DURATION_MS);
@@ -200,7 +217,7 @@ export function createPetOverlay(store, mappings, { createElement, useRef, useSt
     function onPointerCancel(e) {
       // pointercancel（触摸被系统打断/浏览器接管手势）后清引用，防后续 move 误跟随。
       dragRef.current = null;
-      e.currentTarget.releasePointerCapture?.(e.pointerId);
+      releasePointer(e.currentTarget, e.pointerId);
     }
 
     const anim = overlayAnimStyle(snap);
