@@ -30,5 +30,7 @@ jobs:
       - run: git diff --exit-code -- lib/client.js
       # 发布物清单进日志：供人工核对（版本号/文件数/体积）
       - run: npm pack --dry-run
+      # trusted publishing 的 OIDC 凭据交换需要 npm >= 11.5（Node 22 自带 npm 10 不支持）
+      - run: npm install -g npm@latest
       # trusted publishing：OIDC 签名身份自动换取 registry 凭据
       - run: npm publish --provenance
