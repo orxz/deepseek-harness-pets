@@ -44,13 +44,13 @@
 | 26 | 无参 scanPetSources 的默认根覆盖 bug（undefined 清空三源）曾致 Host 池恒空，已修复并加回归测试（test/pet-sources.test.js 首例）；教训：默认参合并必须用 `??` 而非对象展开覆盖 | fixed | 本机探针发现（2026-08-15），修复后 bundled 源扫到 whale/octo，设置 base 层池正确 |
 | 27 | 浏览器侧 `settingsScope.bind` 的失效订阅（settings/updated 转发）注册在调用方自己的 ctx 上，调用方需注入 `remote`（及 `connection`）服务才能收到偏好变更推送；缺注入时初始快照可读但变更不推送 | high（源码+参照） | packages/client/ui-settings settings-scope.ts 头注 + ui-theme/ui-conversation 运行时 inject 列表；本插件 src/index.js 已同步 |
 | 28 | 设置面板不会自动渲染已注册命名空间：面板偏好行是浏览器半边向 `settings.general.item` 插槽注册的组件（{name,id,order,store,locale,inject} + 行组件，自绘标签/取值/写路径经 scope.set）；Host 侧 register 仅让文档接受并校验命名空间 | high（实测） | packages/client/ui-settings contract/slots.ts + @dshthemes/ui ThemePickerRow 实例；用户实测发现（2026-08-15），面板行列于 Roadmap |
-| 29 | `shell.overlay` 插槽：kind `list`（多插件并存）、scope `root`（不随会话卸载，badge/toast 同域）；宿主 AppFrame 渲染 overlayLayer 全框架浮层（`position:absolute; inset:0; z-index:20; pointer-events:none`），子项须自管 pointer-events（本插件根节点 `zIndex:30` + `pointerEvents:auto`，高于浮层基座 20）；右下角常驻定位由组件自身 CSS 管理 | high（源码对照，实机目验待补） | dsh 源码 slots contract + AppFrame overlayLayer（2026-08-15 源码对照，Task 1 brainstorming 验证）+ 本插件 src/index.js（shell.overlay 注入）/ src/overlay-view.js（pointer-events 自管实现）；实机目验待补 |
+| 29 | `shell.overlay` 插槽：kind `list`（多插件并存）、scope `root`（不随会话卸载，badge/toast 同域）；宿主 AppFrame 渲染 overlayLayer 全框架浮层（`position:absolute; inset:0; z-index:20; pointer-events:none`），子项须自管 pointer-events（本插件根节点 `zIndex:30` + `pointerEvents:auto`，高于浮层基座 20）；右下角常驻定位由组件自身 CSS 管理 | high（源码对照 + 实机目验 2026-08-15：悬浮窗常驻出现/点击瞬态/拖拽持久化刷新恢复/console 零报错全过） | dsh 源码 slots contract + AppFrame overlayLayer（2026-08-15 源码对照，Task 1 brainstorming 验证）+ 本插件 src/index.js（shell.overlay 注入）/ src/overlay-view.js（pointer-events 自管实现）；Chrome DevTools 实测通过 |
 
 ## 已知限制与后续验证任务
 
 - 像素图未就绪：v0.2 悬浮窗统一渲染内联鲸鱼 SVG；spritesheet 提交后需登记 src/pet-pool.js 的 BUNDLED_ARTWORK（测试强制一致性）并接入渲染切换点
-- 悬浮窗实机目验待补：右下角常驻 + 点击/悬停/随机闲置/拖拽持久化 + 各状态动画（源码对照已过，见 #29；需重启 DSH Web 后人工确认）；本轮已验证：组合树、boot graph、client bundle 服务、Host 设置注册与三层解析、浏览器工厂产物模拟加载全链路
+- 悬浮窗实机目验已完成（2026-08-15，Chrome DevTools 实测）：常驻右下角/悬停/点击瞬态/拖拽持久化（localStorage + 刷新恢复）/turn 状态流转/console 零报错全过（见 #29）；随机闲置（20-60s 周期）由单测锁定机制、代码路径与点击瞬态同源，未逐一等待人工确认
 - custom/petdex 外部源皮肤的像素图渲染依赖 Host 静态服务（未验证的 dsh 路由/静态能力）→ Roadmap；就绪前悬浮窗不区分皮肤视觉
 - 设置注册失败的容纳性见 #25：非法文档值不会阻断启动，诊断靠面板缺项/settings.get=undefined
-- "常驻浮层"形态已实施（v0.2，shell.overlay root 域注入，见 #29）；实机目验待补
+- "常驻浮层"形态已实施（v0.2，shell.overlay root 域注入，见 #29）；实机目验已完成（同上条）
 - SOTA 精确判定需 Host 侧专用事件族（SessionEventMap 扩展，需 TS declaration merging，纯 JS 包不可行）→ Roadmap
